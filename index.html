@@ -54,7 +54,7 @@
         .container {
             background-color: #2C2C2C;
             padding: 30px;
-            border-radius: 10px;
+            border-radius: 15px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
             width: 100%;
             max-width: 400px;
@@ -75,18 +75,41 @@
             font-size: 16px;
         }
 
-        input[type="number"],
-        input[type="checkbox"],
-        select {
+        input[type="range"] {
+            -webkit-appearance: none;
             width: 100%;
-            padding: 10px;
-            margin: 5px 0;
-            border: 1px solid #3A3A3A;
-            border-radius: 5px;
-            box-sizing: border-box;
-            font-size: 16px;
-            background-color: #1C1C1C;
-            color: #FFFFFF;
+            height: 13px;
+            background: #ddd;
+            border-radius: 30px;
+            outline: none;
+            opacity: 1.7;
+            transition: opacity 1.2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 28px; /* Aumente este valor para um círculo maior */
+            height: 28px; /* Aumente este valor para um círculo maior */
+            background: #007BFF; /* Cor do círculo */
+            cursor: pointer;
+            border-radius: 50%;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: #007BFF;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+
+        input[type="range"]::-ms-thumb {
+            width: 24px;
+            height: 24px;
+            background: #007BFF;
+            cursor: pointer;
+            border-radius: 50%;
         }
 
         button {
@@ -113,7 +136,7 @@
             color: #FFF;
             background-color: #1C1C1C;
             padding: 15px;
-            border-radius: 5px;
+            border-radius: 25px;
             word-wrap: break-word;
         }
 
@@ -139,7 +162,7 @@
             line-height: 1.8;
             background-color: #2C2C2C;
             padding: 40px;
-            border-radius: 10px;
+            border-radius: 20px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
             margin-top: 20px;
         }
@@ -197,15 +220,15 @@
             align-items: center;
             background-color: #2C2C2C;
             padding: 5px 10px;
-            border-radius: 5px;
+            border-radius: 15px;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
             color: #FFFFFF;
             font-size: 16px;
         }
 
         .caracteres-usados input {
-            margin-right: 8px;
-            transform: scale(1.2);
+            margin-right: 25px;
+            transform: scale(1.4);
         }
 
         /* Estilos para dispositivos menores (exemplo: smartphones) */
@@ -223,7 +246,7 @@
             }
 
             .container {
-                padding: 15px;
+                padding: 5px;
             }
 
             button {
@@ -267,8 +290,9 @@
 
     <div class="container">
         <h2></h2>
-        <label for="length">Comprimento da senha:</label>
-        <input type="number" id="length" min="4" max="30" value="12">
+        <label for="password-length">Comprimento da senha:</label>
+        <input type="range" id="password-length" min="1" max="70" value="12" oninput="updateLengthLabel(this.value)">
+        <div id="length-value" style="color: #dfe0e6; margin-bottom: 10px;">12</div>
 
         <div class="caracteres-usados">
             <label><input type="checkbox" id="uppercase" checked> ABC</label>
@@ -277,8 +301,9 @@
             <label><input type="checkbox" id="symbols"> #$&</label>
         </div>
 
+        <div class="resultado" id="password">Sua senha aparecerá aqui</div>
+        <div class="resultado" id="password-strength" style="background-color: #4caf50; color: white; padding: 15px; border-radius: 5px; margin-top: 10px;">Muito forte</div>
         <button onclick="generatePassword()">Gerar Senha</button>
-        <div class="resultado" id="resultado">Sua senha aparecerá aqui</div>
         <div class="copy-btn" id="copyBtn" onclick="copyPassword()">Copiar para a área de transferência</div>
     </div>
 
@@ -295,58 +320,87 @@
             <img src="complexo.png" alt="Icone Complexa">
             <div>
                 <h3>Complexa</h3>
-                <p>Uma senha forte é composta por uma combinação de letras maiúsculas, minúsculas, números e símbolos.</p>
+                <p>Uma senha forte deve incluir letras maiúsculas, minúsculas, números e símbolos.</p>
             </div>
         </div>
         <div class="caracteristica">
-            <img src="exclusive.png" alt="Icone Unica">
+            <img src="exclusive.png" alt="Icone Aleatória">
             <div>
-                <h3>Única</h3>
-                <p>Utilize senhas diferentes para cada conta para minimizar riscos em caso de vazamento de dados.</p>
+                <h3>Aleatória</h3>
+                <p>A aleatoriedade garante que a senha seja difícil de adivinhar ou quebrar por métodos comuns.</p>
             </div>
         </div>
     </div>
 
     <div class="footer-message">
-        Lembre-se de usar um gerenciador de senhas para armazenar todas as suas senhas de forma segura.
+        Security Password &copy; 2024 - Gerador de Senhas Seguras
     </div>
 
     <script>
+        const lengthLabel = document.getElementById('length-value');
+        const passwordOutput = document.getElementById('password');
+        const passwordStrength = document.getElementById('password-strength');
+        const uppercase = document.getElementById('uppercase');
+        const lowercase = document.getElementById('lowercase');
+        const numbers = document.getElementById('numbers');
+        const symbols = document.getElementById('symbols');
+
+        function updateLengthLabel(value) {
+            lengthLabel.textContent = value;
+            generatePassword();
+        }
+
         function generatePassword() {
-            var length = document.getElementById("length").value;
-            var useUppercase = document.getElementById("uppercase").checked;
-            var useLowercase = document.getElementById("lowercase").checked;
-            var useNumbers = document.getElementById("numbers").checked;
-            var useSymbols = document.getElementById("symbols").checked;
+            const length = parseInt(lengthLabel.textContent);
+            const charset = {
+                uppercase: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+                lowercase: 'abcdefghijklmnopqrstuvwxyz',
+                numbers: '0123456789',
+                symbols: '!@#$%^&*()_+~`|}{[]:;?><,./-='
+            };
+            let password = '';
+            let availableChars = '';
 
-            var uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            var lowercase = "abcdefghijklmnopqrstuvwxyz";
-            var numbers = "0123456789";
-            var symbols = "!@#$%^&*()_+~`|}{[]:;?><,./-=";
+            if (uppercase.checked) availableChars += charset.uppercase;
+            if (lowercase.checked) availableChars += charset.lowercase;
+            if (numbers.checked) availableChars += charset.numbers;
+            if (symbols.checked) availableChars += charset.symbols;
 
-            var allChars = "";
-            if (useUppercase) allChars += uppercase;
-            if (useLowercase) allChars += lowercase;
-            if (useNumbers) allChars += numbers;
-            if (useSymbols) allChars += symbols;
-
-            var password = "";
-            for (var i = 0; i < length; i++) {
-                var randomIndex = Math.floor(Math.random() * allChars.length);
-                password += allChars[randomIndex];
+            for (let i = 0; i < length; i++) {
+                password += availableChars.charAt(Math.floor(Math.random() * availableChars.length));
             }
 
-            document.getElementById("resultado").textContent = password;
+            passwordOutput.textContent = password;
+            updatePasswordStrength(length);
+        }
+
+        function updatePasswordStrength(length) {
+            let strength = '';
+            let color = '';
+
+            if (length <= 5) {
+                strength = 'Muito Fraca';
+                color = '#FF0000';
+            } else if (length <= 9) {
+                strength = 'Fraca';
+                color = '#FFA500';
+            } else {
+                strength = 'Muito Forte';
+                color = '#4CAF50';
+            }
+
+            passwordStrength.textContent = strength;
+            passwordStrength.style.backgroundColor = color;
         }
 
         function copyPassword() {
-            var password = document.getElementById("resultado").textContent;
-            navigator.clipboard.writeText(password).then(function () {
-                alert("Senha copiada para a área de transferência!");
-            }, function () {
-                alert("Erro ao copiar a senha.");
+            navigator.clipboard.writeText(passwordOutput.textContent).then(() => {
+                alert('Senha copiada para a área de transferência!');
             });
         }
+
+        // Gera uma senha inicial com o valor padrão
+        generatePassword();
     </script>
 </body>
 
