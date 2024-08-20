@@ -56,8 +56,10 @@
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-            width: 400px;
+            width: 100%;
+            max-width: 400px;
             text-align: center;
+            margin: 0 10px;
         }
 
         h2 {
@@ -205,6 +207,51 @@
             margin-right: 8px;
             transform: scale(1.2);
         }
+
+        /* Estilos para dispositivos menores (exemplo: smartphones) */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .description h2 {
+                font-size: 24px;
+            }
+
+            .description p {
+                font-size: 14px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            button {
+                font-size: 16px;
+                padding: 10px;
+            }
+
+            .caracteristicas {
+                padding: 20px;
+            }
+
+            .caracteristica img {
+                max-width: 40px;
+            }
+
+            .caracteristica h3 {
+                font-size: 18px;
+            }
+
+            .caracteristica p {
+                font-size: 14px;
+            }
+
+            .footer-message {
+                font-size: 16px;
+                padding: 15px;
+            }
+        }
     </style>
 </head>
 
@@ -248,58 +295,57 @@
             <img src="complexo.png" alt="Icone Complexa">
             <div>
                 <h3>Complexa</h3>
-                <p>Uma senha forte é composta por uma combinação de letras (incluindo maiúsculas e minúsculas), números e símbolos para formar uma linha de caracteres de difícil previsão que não se pareça com nenhum nome ou palavras comuns.</p>
+                <p>Uma senha forte é composta por uma combinação de letras maiúsculas, minúsculas, números e símbolos.</p>
             </div>
         </div>
         <div class="caracteristica">
-            <img src="exclusive.png" alt="Icone Exclusiva">
+            <img src="exclusive.png" alt="Icone Unica">
             <div>
-                <h3>Exclusiva</h3>
-                <p>Uma senha forte deve ser utilizada somente em uma única conta para reduzir a vulnerabilidade em caso de violação de dados.</p>
+                <h3>Única</h3>
+                <p>Utilize senhas diferentes para cada conta para minimizar riscos em caso de vazamento de dados.</p>
             </div>
         </div>
     </div>
 
     <div class="footer-message">
-        Sempre use senhas diferentes em todas as plataformas para evitar ser hackeado.
+        Lembre-se de usar um gerenciador de senhas para armazenar todas as suas senhas de forma segura.
     </div>
 
     <script>
         function generatePassword() {
-            const length = parseInt(document.getElementById('length').value);
-            const includeUppercase = document.getElementById('uppercase').checked;
-            const includeLowercase = document.getElementById('lowercase').checked;
-            const includeNumbers = document.getElementById('numbers').checked;
-            const includeSymbols = document.getElementById('symbols').checked;
+            var length = document.getElementById("length").value;
+            var useUppercase = document.getElementById("uppercase").checked;
+            var useLowercase = document.getElementById("lowercase").checked;
+            var useNumbers = document.getElementById("numbers").checked;
+            var useSymbols = document.getElementById("symbols").checked;
 
-            const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            const lowercase = "abcdefghijklmnopqrstuvwxyz";
-            const numbers = "0123456789";
-            const symbols = "#$%&@*!";
+            var uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            var lowercase = "abcdefghijklmnopqrstuvwxyz";
+            var numbers = "0123456789";
+            var symbols = "!@#$%^&*()_+~`|}{[]:;?><,./-=";
 
-            let characters = "";
-            if (includeUppercase) characters += uppercase;
-            if (includeLowercase) characters += lowercase;
-            if (includeNumbers) characters += numbers;
-            if (includeSymbols) characters += symbols;
+            var allChars = "";
+            if (useUppercase) allChars += uppercase;
+            if (useLowercase) allChars += lowercase;
+            if (useNumbers) allChars += numbers;
+            if (useSymbols) allChars += symbols;
 
-            let password = "";
-            for (let i = 0; i < length; i++) {
-                password += characters.charAt(Math.floor(Math.random() * characters.length));
+            var password = "";
+            for (var i = 0; i < length; i++) {
+                var randomIndex = Math.floor(Math.random() * allChars.length);
+                password += allChars[randomIndex];
             }
 
-            document.getElementById('resultado').innerText = password;
+            document.getElementById("resultado").textContent = password;
         }
 
         function copyPassword() {
-            const password = document.getElementById('resultado').innerText;
-            const tempInput = document.createElement("input");
-            tempInput.value = password;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand("copy");
-            document.body.removeChild(tempInput);
-            alert("Senha copiada para a área de transferência!");
+            var password = document.getElementById("resultado").textContent;
+            navigator.clipboard.writeText(password).then(function () {
+                alert("Senha copiada para a área de transferência!");
+            }, function () {
+                alert("Erro ao copiar a senha.");
+            });
         }
     </script>
 </body>
